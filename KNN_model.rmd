@@ -1,0 +1,114 @@
+---
+title: "Untitled"
+author: "  "
+date: "4/9/2020"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+
+
+```{r}
+library(tidyverse)
+```
+https://www.kaggle.com/akshat0007/knn-regression-1-from-scratch-in-r
+```{r}
+list.files(path = "C:/Users/kisho/Desktop/Winter2020/DSA6100/Project")
+```
+
+```{r}
+knn_model = function(x,y,k)
+{
+  if (!is.matrix(x))
+  {
+    x = as.matrix(x)
+  }
+  if (!is.matrix(y))
+  {
+    y = as.matrix(y)
+  }
+  sknn = list()
+  sknn[['points']] = x
+  sknn[['value']] = y
+  sknn[['k']] = k
+  attr(sknn, "class") = "knn_model"
+  return(sknn)
+}
+```
+
+```{r}
+S_pairwise_dis=function(X,Y)
+{
+  xn = rowSums(X ** 2)
+  yn = rowSums(Y ** 2)
+  outer(xn, yn, '+') - 2 * tcrossprod(X, Y)
+}
+```
+
+Compute pairwise distance and select the K-closest points
+```{r}
+predict.knn_model = function(sknn,x)
+{
+  if (!is.matrix(x))
+  {
+    x = as.matrix(x)
+  }
+  dist_pair = compute_pairwise_distance(x,sknn[['points']])
+  crossprod(apply(dist_pair,1,order) <= sknn[['k']], sknn[["value"]]) / sknn[['k']]
+}
+```
+
+```{r}
+suicidedata=read.csv("C:/Users/kisho/Desktop/Winter2020/DSA6100/Project/master.csv")
+```
+
+```{r}
+attach(suicidedata)
+```
+
+```{r}
+summary(suicidedata)
+```
+
+```{r}
+plot(population,suicides_no)
+```
+Diving test and train data. we are taking 80% of the data into sample dataset
+```{r}
+size = floor(0.80*nrow(suicidedata))  
+size  # count of the sample size
+```
+
+```{r}
+set.seed(2020)   # set seed 
+train_random = sample(seq_len(nrow(suicidedata)),size = size)  # Randomly identifies therows equal to sample size ( defined in previous instruction) from  all the rows of Smarket dataset and stores the row number in train_ind
+train =df[train_random,] #creates the training dataset with row numbers stored in train_ind
+test=df[-train_random,]  # creates the test dataset excluding the row numbers mentioned in train_ind
+```
+
+```{r}
+x_train=train["population"]
+y_train=train["suicides_no"]
+x_test=test["population"]
+```
+
+
+Prediction of suicide rates of our model Knn regression
+```{r}
+predict.knn_model(knn_model(x_train,y_train,4),x_test)
+```
+
+
+```{r}
+x_test
+```
+
+
+
+
+
+
+
